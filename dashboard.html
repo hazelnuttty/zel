@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>YOU HACKER</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: #0d0d0d;
+      color: #00ff88;
+      font-family: 'Courier New', monospace;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 30px;
+      text-shadow: 0 0 8px #00ff88;
+    }
+
+    .container {
+      background-color: #111;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 15px #00ff8844;
+      width: 100%;
+      max-width: 500px;
+    }
+
+    input, button {
+      width: 100%;
+      padding: 14px;
+      margin-bottom: 15px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: none;
+      background-color: #1a1a1a;
+      color: #00ff88;
+      outline: none;
+      transition: all 0.3s ease;
+    }
+
+    input:focus {
+      border: 1px solid #00ff88;
+      box-shadow: 0 0 5px #00ff88;
+    }
+
+    button {
+      background-color: transparent;
+      border: 1px solid #00ff88;
+      font-weight: bold;
+    }
+
+    button:hover {
+      background-color: #00ff88;
+      color: #0d0d0d;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    pre {
+      background-color: #0a0a0a;
+      border: 1px solid #00ff88;
+      padding: 15px;
+      border-radius: 8px;
+      overflow-y: auto;
+      max-height: 300px;
+      white-space: pre-wrap;
+      text-align: left;
+      margin-top: 20px;
+      font-size: 14px;
+    }
+    .footer {
+      margin-top: 40px;
+      padding: 15px;
+      text-align: center;
+      font-size: 14px;
+      color: var(--text-color);
+      background-color: transparent;
+      opacity: 0.7;
+      transition: opacity 0.3s ease;
+     }
+    .footer:hover {
+  opacity: 1;
+}
+   </style>
+</head>
+<body>
+  <h1>DDoS Tool</h1>
+  <div class="container">
+    <input id="target" type="url" placeholder="https://example.com" required />
+    <input id="count" type="number" placeholder="Jumlah Request" min="1" required />
+    <button id="attackBtn" onclick="toggleAttack()">Mulai Serangan</button>
+    <pre id="log">Log akan muncul di sini...</pre>
+  </div>
+  
+<div class="footer" id="footer"></div>
+
+<script>
+  const year = new Date().getFullYear();
+  document.getElementById("footer").innerHTML = `&copy; ${year} DDOS WEB BY HAZELNUT.`;
+</script>
+  <script>
+    let isAttacking = false;
+    let controller = null;
+
+    async function toggleAttack() {
+      const btn = document.getElementById("attackBtn");
+      const logBox = document.getElementById("log");
+
+      if (!isAttacking) {
+        // Mulai serangan
+        const target = document.getElementById("target").value;
+        const count = parseInt(document.getElementById("count").value);
+
+        if (!target || !count) {
+          alert("Isi target dan jumlah request dulu ya.");
+          return;
+        }
+
+        btn.textContent = "Stop Serangan";
+        isAttacking = true;
+        logBox.textContent = "Menyerang...\n";
+
+        controller = new AbortController();
+
+        try {
+          const res = await fetch("https://[BACKEND_URL]/attack", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ target, count }),
+            signal: controller.signal
+          });
+
+          const data = await res.json();
+          logBox.textContent = data.logs.join("\n");
+        } catch (err) {
+          logBox.textContent = "Serangan dihentikan atau gagal: " + err;
+        } finally {
+          isAttacking = false;
+          btn.textContent = "Mulai Serangan";
+        }
+      } else {
+        // Stop serangan
+        if (controller) controller.abort();
+        logBox.textContent += "\nSerangan dihentikan oleh user.";
+        document.getElementById("attackBtn").textContent = "Mulai Serangan";
+        isAttacking = false;
+      }
+    }
+  </script>
+</body>
+</html>
