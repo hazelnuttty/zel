@@ -139,11 +139,13 @@
 
         try {
           const res = await fetch("https://leon-previously-zip-brain.trycloudflare.com/attack", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ target, count }),
-            signal: controller.signal
-          });
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    target: document.getElementById("target").value,
+    count: document.getElementById("count").value
+  })
+})
 
           const data = await res.json();
           logBox.textContent = data.logs.join("\n");
