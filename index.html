@@ -138,7 +138,7 @@
         controller = new AbortController();
 
         try {
-          const res = await fetch("https://leon-previously-zip-brain.trycloudflare.com", {
+          const res = await fetch("https://leon-previously-zip-brain.trycloudflare.com/attack", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ target, count }),
